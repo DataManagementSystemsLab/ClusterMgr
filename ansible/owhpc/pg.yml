@@ -13,6 +13,11 @@
         name: 
           - postgresql
           - postgresql-contrib
+    - name: Install Python packages
+      pip:
+        name:
+          - psycopg2-binary
+          - psycopg2
 
     - name: Start and enable the PostgreSQL service
       systemd:
