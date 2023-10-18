@@ -6,10 +6,10 @@
     volume_group: ubuntu-vg  # Replace with your desired volume group name
     logical_volumes:
       - name: pool
-        size: 5T
+        size: 10T
         path: /pool
       - name: data
-        size: 5T
+        size: 1T
         path: /data
 
     filesystem_type: ext4  # Replace with your desired filesystem type
