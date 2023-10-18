@@ -1,6 +1,6 @@
 ---
 - name: Install PostgreSQL and configure a database on Ubuntu
-  hosts: 151.181.203.21
+  hosts: terrform_db
   become: yes  # To run tasks with sudo
 
   tasks:
