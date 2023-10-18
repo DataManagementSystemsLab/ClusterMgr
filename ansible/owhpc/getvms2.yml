@@ -1,0 +1,38 @@
+# not working still
+---
+- name: Get list of running VMs with IP and MAC addresses
+  hosts: all_servers
+  gather_facts: true
+  become: true
+  tasks:
+
+    - name: Get list of running VMs 2
+      virt:
+        command: list_vms
+      register: all_vms
+
+    - name: Display running VMs with IP and MAC addresses
+      debug:
+        var: all_vms
+          #    - name: Print
+          #debug:
+          #  msg: "VM {{item.name}} has {{ item.info.networks[0].ip }} "
+    - name: Get VM information
+      virt_net:
+        command: info
+        name: "{{ item }}"
+      with_items: "{{ all_vms.list_vms }}"
+      register: xmls
+    - name: Print
+      debug:
+        var: xmls
+
+          #- name: Get VM network information
+          #virt_net:
+          #command: list_nets
+          #name: a
+          #register: result
+
+          #- name: Print
+          #debug:
+          #var: result

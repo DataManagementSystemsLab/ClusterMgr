@@ -1,0 +1,124 @@
+- name: Create Users for database servers
+  hosts: db_vm
+  gather_facts: false
+  become: yes
+  become_method: sudo # this is needed to have sudo acess
+  tasks:
+
+    - name: Copy dbusers.csv
+      copy:
+          src: ./dbusers.csv
+          dest: users.csv 
+    - name: Read users from CSV file
+      read_csv:
+        path: users.csv
+      register: users_data
+    - debug:
+        msg: " {{ user.username }} and email is {{ user.email }}"
+      loop: "{{ users_data.list }}"
+      loop_control:
+         loop_var: user    
+    - name: Read users from CSV file
+      read_csv:
+        path: users.csv
+      register: users_data
+
+    - debug:
+        msg: " {{ user.username }} and email is {{ user.email }}"
+      loop: "{{ users_data.list }}"
+      loop_control:
+         loop_var: user    
+
+    - name: Create user accounts
+      user:
+        name: "{{ user.username }}"
+        # need password hash for user creation (the password is linux)
+        password: "$y$j9T$4gub3vwr89Zmu2n3rOhfz.$8GzO/hKLtbPGwoJkNs.9y9mwYXCprFB0Coq18ma3XD8" 
+        update_password: on_create
+        force: yes
+        create_home: true
+        shell: /bin/bash  
+      loop: "{{ users_data.list }}"
+      loop_control:
+        loop_var: user   
+
+    - name: Install MySQL packages
+      apt: pkg={{ item }} state=latest
+      with_items:
+        - bundler
+        - mysql-server
+        - mysql-client
+        - libmysqlclient-dev
+        - python3-mysqldb
+        - build-essential
+
+    # Update the root password immediately. This should come first as ordering
+    # is very important
+    - name: Update mysql root password for all root accounts "1234"
+      mysql_user: name=root password="1234" priv="*.*:ALL,GRANT"
+
+    # After we update the root password we are going to use this everytime
+    # we do an update or create something on mysql
+    # we will create a copy in /root/.my.cnf as this will be use to check
+    # the login or root credential. Meaning this should contain the latest
+    # password of the root (right after we update the root password)
+    - name: copy .my.cnf file with root password credentials
+      template: src=my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
+      notify: Restart the MySQL service
+
+    # Remove the unnecessary db for now
+    - name: Remove the test database
+      mysql_db: name=test state=absent
+
+    # Make sure no anonymous user in the db
+    - name: ensure anonymous users are not in the database
+      mysql_user: name='' host={{ item }} state=absent
+      with_items:
+        - 127.0.0.1
+        - localhost
+
+    # Delete the user if its existing so that we can create the user again
+    - name: Delete deploy DB user
+      mysql_user: name={{ dbuser }} password=1234 state=absent
+      notify: Restart the MySQL service
+
+    # Create our own user aside from the root password
+    # here our root password and new user created will have the same password
+    - name: Add deploy DB user
+      mysql_user: name={{ user }} password=1234 priv=*.*:ALL,GRANT state=present
+      loop: "{{ users_data.list }}"
+      loop_control:
+        loop_var: user   
+      notify: Restart the MySQL service
+      
+    # # Grant the privilege for the newly created user
+    # - name: grant privilege on "{{ dbname }}" to "{{ dbuser }}"
+    #   mysql_user:
+    #     name: "{{ item.user }}"
+    #     host: "{{ item.host }}"
+    #     password: "{{ dbpass }}"
+    #     priv: "*.*:ALL"
+    #     state: present
+    #   with_items:
+    #     - { user: "{{ dbuser }}" , host: localhost }
+    #     - { user: "{{ dbuser }}" , host: 127.0.0.1 }
+
+#    - name: Create MySQL users
+#      community.mysql.mysql_user:
+#        name: "{{ item.username }}"
+#        password: "1234"
+#        priv: "*.*:ALL"
+#        host: localhost
+#      with_items: "{{ users_data.list }}
+    - name: Create MySQL users
+      community.mysql.mysql_user:
+        check_implicit_admin: true
+        login_user: "root"
+        name: "{{ user.username }}"
+        password: "1234"
+        priv: "*.*:ALL"
+        host: 127.0.0.1
+      loop: "{{ users_data.list }}"
+      loop_control:
+        loop_var: user   
+

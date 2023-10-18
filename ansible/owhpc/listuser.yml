@@ -1,0 +1,14 @@
+---
+- name: List all users
+  hosts: remote_hosts
+  gather_facts: no
+  tasks:
+    - name: Get list of Users
+      shell: getent passwd | grep -v nologin
+
+      register: user_results
+      changed_when: false
+
+    - name: Display
+      debug:
+        var: user_results.stdout_lines

@@ -1,0 +1,28 @@
+---
+- name: Download KVM Image
+  hosts: remote_hosts
+  become: true
+  gather_facts: false
+  vars:
+    versions:
+      - name: ubuntu22.04
+        url: https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64-disk-kvm.img
+
+      - name: ubuntu20.04
+        url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64-disk-kvm.img
+
+  tasks:
+    - name: Create directory to store the image
+      file:
+        path: /pool/iso
+        state: directory
+        mode: '0755'
+
+    - name: Print full path
+      debug:
+        var: full_path
+    - name: Download KVM image for each version
+      get_url:
+        url: "{{ item.url }}"
+        dest: "/pool/iso/{{item.name}}.img"
+      loop: "{{ versions }}"

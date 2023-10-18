@@ -1,0 +1,40 @@
+---
+- name: Install All required packages on Physical servers and do some basic configurations
+  hosts: remote_hosts
+  become: true
+  tasks:
+   - name: Update apt cache
+     apt:
+      update_cache: true
+   - name: Install required packages
+     package:
+      name: "{{ item }}"
+      state: present
+     loop:
+      - gnupg
+      - software-properties-common
+      - mkisofs
+      - python3-lxml
+
+   - name: Add HashiCorp GPG key
+     ansible.builtin.get_url:
+      url: https://apt.releases.hashicorp.com/gpg
+      dest: /etc/apt/keyrings/hashicorp.asc
+      mode: '0644'
+      force: true
+
+   - name: Add Hashicorp repo
+     ansible.builtin.apt_repository:
+      filename: example-repo
+      repo: 'deb [signed-by=/etc/apt/keyrings/hashicorp.asc] https://apt.releases.hashicorp.com jammy main'
+
+   - name: Update apt cache
+     apt:
+      update_cache: true
+
+   - name: Install required packages
+     package:
+      name: "{{ item }}"
+      state: present
+     loop:
+      - terraform

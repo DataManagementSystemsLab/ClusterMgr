@@ -1,0 +1,21 @@
+- name: List physical volumes (PVs)
+  hosts: remote_hosts
+  gather_facts: false
+  become: true
+    #vars_files:
+    #- passwords.txt
+  tasks:
+    - name: Get list of PVs
+      command: pvs
+      register: pvs_output
+
+    - name: Display list of PVs
+      debug:
+        var: pvs_output.stdout_lines
+    - name: Get list of LVs
+      command: lvs
+      register: lvs_output
+
+    - name: Display list of LVs
+      debug:
+        var: lvs_output.stdout_lines

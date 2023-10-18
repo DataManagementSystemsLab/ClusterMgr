@@ -1,0 +1,42 @@
+
+- name: Install mysql
+  apt:
+    name: ['bundler','mysql-server', 'mysql-client',' libmysqlclient-dev', 'python3-mysqldb', 'build-essential']
+    state: present
+    update_cache: yes
+
+# Allows python to create and manipulate mysql config
+- name: Ensure pymysql is present
+  pip:
+    name: pymysql
+    state: present
+
+- name: Update mysql password for superuser `{{ mysql_superuser }}`
+  mysql_user:
+    # Update the superuser to have all grants and a password
+    name: "{{ mysql_superuser }}"
+    host: localhost
+    password: "{{ mysql_superuser_password }}"
+    priv: "*.*:ALL,GRANT"
+    # Login *as root* to perform this change, even though you might
+    # be altering the root user itself
+    login_user: root
+    login_password: ""
+    login_port: "{{ mysql_port }}"
+    login_host: localhost
+    login_unix_socket: "{{ mysql_socket }}"
+    # As a good measure,have ansible check whether an implicit login
+    # is possible first
+    check_implicit_admin: yes
+
+- name: Create system-wide mysql configuration file
+  template:
+    src: system_wide_mysql.cnf.j2
+    dest: /etc/my.cnf
+
+- name: Create mysql configuration file for `{{ mysql_superuser }}`
+  template:
+    src: superuser_mysql.cnf.j2
+    dest: "{{ mysql_superuser_home }}/.my.cnf"
+  notify:
+  - Restart Mysql
