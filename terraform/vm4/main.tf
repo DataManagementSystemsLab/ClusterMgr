@@ -47,17 +47,15 @@ provider "libvirt" {
 }
 
 # We fetch the latest ubuntu release image from their mirrors
-resource "libvirt_volume" "${var.projname}-qcow2" {
+resource "libvirt_volume" "vol-${var.projname}-qcow2" {
   count  = var.hosts
- 
   name   = "${var.projname}-${count.index}.qcow2"
   pool   = "default" #CHANGE_ME
   source = "/pool/iso/ubuntu22.04.img"
   format = "qcow2"
 }
 
-
-resource "libvirt_cloudinit_disk" "${var.projname}-commoninit" {
+resource "libvirt_cloudinit_disk" "vol-${var.projname}-commoninit" {
   count = var.hosts
   name  = "${var.projname}-commoninit-${local.names[count.index]}.iso"
   pool  = "default"
@@ -72,8 +70,7 @@ resource "libvirt_cloudinit_disk" "${var.projname}-commoninit" {
   })
 }
 # Create the machine
-resource "libvirt_domain" "${var.projname}-domain-ubuntu" {
-  
+resource "libvirt_domain" "dom-${var.projname}-ubuntu" {
   count      = var.hosts
   name       = local.names[count.index]
   memory     = "4048"
@@ -82,10 +79,10 @@ resource "libvirt_domain" "${var.projname}-domain-ubuntu" {
   autostart  = true
   qemu_agent = true # this is recommended to get ip address
   disk {
-    volume_id = libvirt_volume.${var.projname}-ubuntu-qcow2[count.index].id
+    volume_id = libvirt_volume.vol-${var.projname}-qcow2[count.index].id
   }
 
-  cloudinit = libvirt_cloudinit_disk.${var.projname}-commoninit[count.index].id
+  cloudinit = libvirt_cloudinit_disk.vol-${var.projname}-commoninit[count.index].id
 
   network_interface {
     network_name = "default"
