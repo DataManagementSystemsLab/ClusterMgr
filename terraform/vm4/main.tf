@@ -37,7 +37,7 @@ terraform {
   }
 
    backend "pg" {
-    conn_str = "postgres://user:pass@151.181.203.21/owcluster"
+    conn_str = "postgres://terraform:terrapass@10.100.1.0/owcluster"
    }
 }
 
