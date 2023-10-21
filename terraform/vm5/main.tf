@@ -23,9 +23,9 @@ variable "vcpu" {
   default = 4
 }
 locals {
-  ips   = [for i in range(var.hosts) : "10.100.14.${format("%s", i + 10)}"]
+  ips   = [for i in range(var.hosts) : "10.100.18.${format("%s", i + 10)}"]
   names = [for i in range(var.hosts) : "owhpc-vm1-${format("%s", 10+i)}"]
-  macs  = [for i in range(var.hosts) : "ae:52:0a:b0:14:${format("%02x", i + 10)}"]
+  macs  = [for i in range(var.hosts) : "ae:52:0a:b0:18:${format("%02x", i + 10)}"]
   items = [for i in range(var.hosts) :  "${format("%s", i+10)}"]
 }
 
