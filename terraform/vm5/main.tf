@@ -8,7 +8,7 @@ variable "hosts" {
 }
 variable "projname" {
   type    = string
-  default = "owhpc-vm2"
+  default = "owhpc-vm1"
 }
 variable "interface" {
   type    = string
@@ -24,7 +24,7 @@ variable "vcpu" {
 }
 locals {
   ips   = [for i in range(var.hosts) : "10.100.14.${format("%s", i + 10)}"]
-  names = [for i in range(var.hosts) : "owhpc-vm2-${format("%s", 10+i)}"]
+  names = [for i in range(var.hosts) : "owhpc-vm1-${format("%s", 10+i)}"]
   macs  = [for i in range(var.hosts) : "ae:52:0a:b0:14:${format("%02x", i + 10)}"]
   items = [for i in range(var.hosts) :  "${format("%s", i+10)}"]
 }
@@ -47,17 +47,17 @@ provider "libvirt" {
 }
 
 # We fetch the latest ubuntu release image from their mirrors
-resource "libvirt_volume" "vol-owhpc-vm2-qcow2" {
+resource "libvirt_volume" "vol-owhpc-vm1-qcow2" {
   count  = var.hosts
-  name   = "owhpc-vm2-${count.index}.qcow2"
+  name   = "owhpc-vm1-${count.index}.qcow2"
   pool   = "default" #CHANGE_ME
   source = "/pool/iso/ubuntu22.04.img"
   format = "qcow2"
 }
 
-resource "libvirt_cloudinit_disk" "vol-owhpc-vm2-commoninit" {
+resource "libvirt_cloudinit_disk" "vol-owhpc-vm1-commoninit" {
   count = var.hosts
-  name  = "owhpc-vm2-commoninit-${local.names[count.index]}.iso"
+  name  = "owhpc-vm1-commoninit-${local.names[count.index]}.iso"
   pool  = "default"
   user_data = templatefile("${path.module}/cloud_init.cfg", {
     host_name = local.names[count.index]
@@ -70,7 +70,7 @@ resource "libvirt_cloudinit_disk" "vol-owhpc-vm2-commoninit" {
   })
 }
 # Create the machine
-resource "libvirt_domain" "dom-owhpc-vm2-ubuntu" {
+resource "libvirt_domain" "dom-owhpc-vm1-ubuntu" {
   count      = var.hosts
   name       = local.names[count.index]
   memory     = "4048"
@@ -79,10 +79,10 @@ resource "libvirt_domain" "dom-owhpc-vm2-ubuntu" {
   autostart  = true
 #  qemu_agent = true # this is recommended to get ip address
   disk {
-    volume_id = libvirt_volume.vol-owhpc-vm2-qcow2[count.index].id
+    volume_id = libvirt_volume.vol-owhpc-vm1-qcow2[count.index].id
   }
 
-  cloudinit = libvirt_cloudinit_disk.vol-owhpc-vm2-commoninit[count.index].id
+  cloudinit = libvirt_cloudinit_disk.vol-owhpc-vm1-commoninit[count.index].id
 
   network_interface {
     network_name = "default"
