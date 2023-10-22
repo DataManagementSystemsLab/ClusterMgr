@@ -1,17 +1,18 @@
+--- 
+
 terraform {
-  required_providers {
-    libvirt = {
-      source = "dmacvicar/libvirt"
+    required_providers {
+      libvirt = {
+        source = "dmacvicar/libvirt"
+      }
     }
+  
   }
-
-}
-
-# instance the provider
-provider "libvirt" {
-  uri = "qemu:///system"
-}
- 
+  
+  # instance the provider
+  provider "libvirt" {
+    uri = "qemu:///system"
+  }
   # We fetch the latest ubuntu release image from their mirrors
   resource "libvirt_volume" "vol-my_vm-1" {
     name   = "vol-my_vm-1.qcow2"
@@ -24,7 +25,7 @@ provider "libvirt" {
      name   = "vol-cloudinit-my_vm-1.qcow2"
      pool  = "default"
      user_data = templatefile("${path.module}/cloud_init.cfg", {
-      host_name =  
+      host_name =  "my_vm"
       auth_key  = file("~/.ssh/id_vm.pub")
     })
     network_config = templatefile("${path.module}/network_config.cfg", {
@@ -53,8 +54,8 @@ provider "libvirt" {
     }
     network_interface {
       bridge    = "br0"
-      addresses = [10.100.14.1]
-      mac       = ae:52:0a:b0:14:01
+      addresses = ["10.100.14.1"]
+      mac       = "ae:52:0a:b0:14:01"
     }
     boot_device {
       dev = ["hd", "network"]
