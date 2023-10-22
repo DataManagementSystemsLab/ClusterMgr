@@ -15,3 +15,9 @@ and password terra4pass
 
 resize disk
 https://packetpushers.net/ubuntu-extend-your-default-lvm-space/
+
+
+to find device
+sudo fdisk -l
+to add a disk
+pvcreate /dev/sdb
