@@ -4,16 +4,25 @@ from jinja2 import Environment, FileSystemLoader
 template_path = "vm.tmpl"
 output_path = "output.txt"
 
-# Data to fill in the template
 data = {
-    "vm": {
-        "name": "my_vm",
-        "indx": 1,
-        "ip": "10.100.14.1",
-        "mac": "ae:52:0a:b0:14:01",
-        "memory": 4096,
-        "vcpu": 4
-    }
+    "vms": [
+        {
+            "name": "my_vm",
+            "indx": 1,
+            "ip": "10.100.14.1",
+            "mac": "ae:52:0a:b0:14:01",
+            "memory": 4096,
+            "vcpu": 4
+        },
+        {
+            "name": "my_vm2",
+            "indx": 2,
+            "ip": "10.100.14.2",
+            "mac": "ae:52:0a:b0:14:02",
+            "memory": 4096,
+            "vcpu": 4
+        }
+    ]
 }
 
 # Initialize Jinja2 environment with the template folder
