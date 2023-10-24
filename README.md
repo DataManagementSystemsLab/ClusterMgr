@@ -2,7 +2,8 @@
 
 Ansible
 Resize disk
-
+qemu
+cfdisk 
 
 Terrform
 
@@ -21,3 +22,10 @@ to find device
 sudo fdisk -l
 to add a disk
 pvcreate /dev/sdb
+
+
+postgresl local poswword
+mk 1234
+
+mysql local password (151.181.203.21)
+terraform 1234

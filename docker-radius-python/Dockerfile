@@ -14,7 +14,6 @@ RUN pip3 install google-auth google-auth-oauthlib google-auth-httplib2 google-ap
 #RUN apt-get remove python3-pip
 RUN apt-get clean
 
-
 # Edit /etc/freeradius/3.0/mods-config/files/authorize file
 # This is the real file for /etc/freeradius/3.0/users
 # Copy existing /etc/freeradius/sites-available/default file to container
@@ -28,9 +27,7 @@ COPY python3.mod /etc/freeradius/3.0/mods-available/python3
 COPY default /etc/freeradius/3.0/sites-available/default
 COPY clients.conf /etc/freeradius/3.0/clients.conf
 COPY otp_auth.py  /etc/freeradius/3.0/mods-config/python3/otp_auth.py
-COPY mail_access.py  /etc/freeradius/3.0/mods-config/python3/mail_access.py
 COPY db_access.py  /etc/freeradius/3.0/mods-config/python3/db_access.py
-COPY create_user.py  /etc/freeradius/3.0/mods-config/python3/create_user.py
 COPY util.py  /etc/freeradius/3.0/mods-config/python3/util.py
 
 

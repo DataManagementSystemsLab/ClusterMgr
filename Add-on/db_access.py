@@ -1,12 +1,17 @@
 import mysql.connector 
 import os
 
-def connect_(host, user, password):
+
+def connect():
+  HOST=os.environ.get('DB_HOST')
+  USER=os.environ.get('DB_USER')
+  PASS=os.environ.get('DB_PASS')
+  
   while True:
     try:
       print("*** Connecting ***")
-      conn = mysql.connector.connect(user=user, password=password,
-                                     host=host,
+      conn = mysql.connector.connect(user=USER, password=PASS,
+                                     host=HOST,
                                      database='owcluster')
       print("connected>>>>>>>>>>>>")
       return conn
@@ -14,26 +19,21 @@ def connect_(host, user, password):
       print(e)
       print("Returing None a")
       return None
-
-def connect():
-   HOST=os.environ.get('DB_HOST')
-   USER=os.environ.get('DB_USER')
-   PASS=os.environ.get('DB_PASS')
-   return connect_(HOST,USER,PASS)
-
-
+    
 def run_query(cnx,q,vals):
   while True:
     try:
       curx=cnx.cursor()
       try:
-        curx.execute(q,vals)
+                #print("---")
+                curx.execute(q,vals)
+                #print("****************"+curx.statement)
       except Exception:
           print("****************"+curx.statement)
       if not curx.with_rows:
           return None
-      row=curx.fetchone()
-      return row
+      rows=curx.fetchall()
+      return rows
     except Exception as e:
       print("a")
       print(e)

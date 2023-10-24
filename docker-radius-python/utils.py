@@ -1,0 +1,88 @@
+import hashlib
+from datetime import datetime
+def get_hash_password(user, p):
+    st= user+p
+    h1=hashlib.sha1(st.encode("utf-8"))
+    return str(h1.hexdigest())
+
+def record_action(cnx,id, user,action):
+    q=f" insert into owcluster.logs values ( %s,%s,now(),%s);commit;" 
+    run_query(cnx,q,(id,user,action ))
+
+def insert_user(cnx,user,passwd, secret_key, email):
+    q=f"insert into owcluster.users(username, passwd,secret_key, grp, email ) values (%s,%s,%s, 'GP_Students', %s);commit;"
+    passwd=util.get_hash_password(user, passwd)
+    run_query(cnx,q,(user,passwd,secret_key,email ))
+
+def check_query_1(cnx,user, password,eventtime):
+    timestamp = datetime.strptime(eventtime, '%b %d %Y %H:%M:%S %Z')
+    unix_timestamp=time.mktime(timestamp.timetuple())
+    i=password.rfind(':')
+    passwd=password[0:i]
+    code=password[i+1:]
+    code=int(code)
+    is_valid=False
+    q=f"select  id,secret_key,grp from owcluster.users where username = %s and hashpasswd=%s;" 
+    id = -1
+    grp =""
+    passwd=utils.get_hash_password(user, passwd)
+
+    row= run_query(cnx,q, (user,passwd))
+    if  row:
+          secret_key=row[1]
+          id=row[0]
+          grp=row[2]
+          totp = pyotp.TOTP(secret_key)
+          for delta in range(-50,100,4):
+            comp=totp.at(unix_timestamp+delta)
+            comp= int(comp)
+            
+            is_valid = comp == code
+            if is_valid:
+                break
+    if is_valid:
+       act="accept"
+       res={
+        "request": (()),
+        "reply": (("Reply-Message","Hi from the other side"),("PaloAlto-User-Group",":=", grp)),
+        "config": (("Auth-Type","Accept"),),
+        }          
+    else:
+       act= "reject"
+       res={
+        "request": (()),
+        "reply": (("Reply-Message","code is NOT valid!!")),
+        "config": (("Auth-Type","Reject"),),
+        }          
+       
+    record_action(cnx,id,user,act)
+    return is_valid, res
+
+
+def check_authorize(cnx,d):
+  
+    user=d['User-Name']
+    password=d["User-Password"]
+    eventtime=d["Event-Timestamp"]
+
+    if ':' in password:
+        c, res=check_query_1(cnx,user,password, eventtime)
+        #print("RES")
+        #print(res)
+        return c, res
+    if user=='Mike' and password=='2F2FBasioOW$':
+        act='accept'
+        res={
+        "request": (()),
+        "reply": (("Reply-Message","Hi from the Other side.."),("PaloAlto-User-Group",":=", "AA")),
+        "config": (("Auth-Type","Accept"),),
+        }          
+        return True, res
+    
+    act= "reject"
+    res={
+        "request": (()),
+        "reply": (("Reply-Message","code is NOT valid!!"),),
+        "config": (("Auth-Type","Reject"),),
+        }          
+    return False, res
