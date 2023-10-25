@@ -1,7 +1,7 @@
 import mysql.connector 
 import os
 
-def connect_(host, user, password):
+def connect_base(host, user, password):
   while True:
     try:
       print("*** Connecting ***")
@@ -16,26 +16,32 @@ def connect_(host, user, password):
       return None
 
 def connect():
+  host='127.0.0.1'
+  user='root'
+  password='1234'
+  return connect_base(host,user,password)
+
+def connect_():
    HOST=os.environ.get('DB_HOST')
    USER=os.environ.get('DB_USER')
    PASS=os.environ.get('DB_PASS')
-   return connect_(HOST,USER,PASS)
+   return connect_base(HOST,USER,PASS)
 
 
 def run_query(cnx,q,vals):
-  while True:
     try:
       curx=cnx.cursor()
       try:
-        curx.execute(q,vals)
+        if vals is None:
+          curx.execute(q)
+        else:  
+          curx.execute(q,vals)
       except Exception:
           print("****************"+curx.statement)
       if not curx.with_rows:
           return None
-      row=curx.fetchone()
-      return row
+      rows=curx.fetchall()
+      return rows
     except Exception as e:
-      print("a")
       print(e)
-      cnx=connect()
     return None      

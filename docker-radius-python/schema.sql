@@ -8,6 +8,6 @@ passwd varchar(40), hashpasswd varchar(40), secret_key char(40), grp varchar(20)
 create table if not exists  owcluster.logs (id int primary key AUTO_INCREMENT ,username varchar(15), tm datetime, actn char(10));
 
 Create table if not exists owcluster.vms (id int primary key AUTO_INCREMENT, ipaddr VARCHAR(15) unique, memory int, vcpu int,  host_image varchar(20),disk_image varchar(40));
-create table if not exists  owcluster.vmusers (id int primary key AUTO_INCREMENT,  username varchar(15) unique ,passwd varchar(20), superuser boolean);
+create table if not exists  owcluster.vmusers (id int primary key AUTO_INCREMENT,  username varchar(15) unique ,passwd varchar(20), superuser boolean, sent boolean);
 
 
