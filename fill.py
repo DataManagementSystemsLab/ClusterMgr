@@ -4,26 +4,30 @@ from jinja2 import Environment, FileSystemLoader
 template_path = "vm.tmpl"
 output_path = "output.txt"
 
-data = {
-    "vms": [
-        {
-            "name": "my_vm",
-            "indx": 1,
-            "ip": "10.100.14.1",
-            "mac": "ae:52:0a:b0:14:01",
-            "memory": 4096,
-            "vcpu": 4
-        },
-        {
-            "name": "my_vm2",
-            "indx": 2,
-            "ip": "10.100.14.2",
-            "mac": "ae:52:0a:b0:14:02",
-            "memory": 4096,
-            "vcpu": 4
-        }
-    ]
+import mysql.connector
+#fix identation
+# Establish connections to the source and target databases
+
+source_db_config = {
+    'host': '127.0.0.1',
+    'user': 'owuser',
+    'password': 'pass4owCluster',
+    'database': 'owcluster',
 }
+source_db = mysql.connector.connect(**source_db_config)
+source_cursor = source_db.cursor()
+source_cursor.execute("select id as indx, ipaddr as ip, memory*1024*1024 as memory, vcpu,macaddr as mac,hostname from vms;")
+
+columns = [column[0] for column in source_cursor.description]
+
+result_set = source_cursor.fetchall()
+data_as_dict = {"vms": [dict(zip(columns, row)) for row in result_set]}
+
+print(data_as_dict)
+
+
+# Create cursors
+
 
 # Initialize Jinja2 environment with the template folder
 env = Environment(loader=FileSystemLoader("."))
@@ -32,7 +36,7 @@ env = Environment(loader=FileSystemLoader("."))
 template = env.get_template(template_path)
 
 # Render the template with data
-filled_template = template.render(data)
+filled_template = template.render(data_as_dict)
 
 # Write the filled template to the output file
 with open(output_path, "w") as output_file:

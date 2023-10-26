@@ -10,10 +10,11 @@ source_db_config = {
 }
 
 destination_db_config = {
-    'host': '151.181.203.21',
+    #151.181.203.21
+    'host': '127.0.0.1',
     'user': 'owuser',
     'password': 'pass4owCluster',
-    'database': 'owcluster',
+    'database': 'owcluster1',
 }
 
 # Connect to the source and destination d
@@ -29,8 +30,21 @@ destination_cursor = destination_db.cursor()
 source_table = 'users'
 destination_table = 'users'
 
+
+source_cursor.execute(f"SHOW COLUMNS FROM {source_table}")
+columns_table1 = [column[0] for column in source_cursor.fetchall()]
+
+# Get a list of columns for table2
+destination_cursor.execute(f"SHOW COLUMNS FROM {destination_table}")
+columns_table2 = [column[0] for column in destination_cursor.fetchall()]
+
+# Find common columns
+common_columns = set(columns_table1).intersection(columns_table2)
+common_columns = list(common_columns)
+cmdsql=f"SELECT " +",".join(common_columns) +f" FROM {source_table}"
 # Query to select the tuples from the source table
-source_cursor.execute(f"SELECT * FROM {source_table}")
+print(cmdsql)
+source_cursor.execute(cmdsql)
 source_data = source_cursor.fetchall()
 
 # Insert the retrieved data into the destination table
@@ -39,8 +53,11 @@ for row in source_data:
     # For example, you can deserialize JSON or parse text data from the source table
     # and then insert it into the destination table
     # For this example, we are directly inserting the data
-    print (row)
-    insert_query = f"INSERT INTO {destination_table} VALUES ({','.join(map(str, row))})"
+    quoted_row = ['"' + str(value) + '"' if isinstance(value, str) else value for value in row]
+    quoted_row1 = ["Null" if value is None else value for value in quoted_row]
+    id=quoted_row1[common_columns.index('id')]
+    insert_query = f"delete from {destination_table} where id={id}; INSERT INTO {destination_table} ( "+",".join(common_columns)+") VALUES (" + ",".join(map(str,quoted_row1)) + ");"
+    print(insert_query)
     destination_cursor.execute(insert_query)
 
 # Commit the changes to the destination database
