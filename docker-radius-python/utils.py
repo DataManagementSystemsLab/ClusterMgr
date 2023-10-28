@@ -33,14 +33,15 @@ def check_query_1(cnx,user, password,eventtime):
 
     row= dba.run_query(cnx,q, (user,passwd))
     if  row:
-          secret_key=row[1]
+          print(row)
           id=row[0]
+          secret_key=row[1]
           grp=row[2]
           totp = pyotp.TOTP(secret_key)
           for delta in range(-50,100,4):
             comp=totp.at(unix_timestamp+delta)
             comp= int(comp)
-            
+            print(comp)
             is_valid = comp == code
             if is_valid:
                 break
