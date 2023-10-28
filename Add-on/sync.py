@@ -39,7 +39,9 @@ def move_data(source_db, destination_db, source_table, destination_table):
         quoted_row = ['"' + str(value) + '"' if isinstance(value, str) else value for value in row]
         quoted_row1 = ["Null" if value is None else value for value in quoted_row]
         id=quoted_row1[common_columns.index('id')]
-        insert_query = f"delete from {destination_table} where id={id}; INSERT INTO {destination_table} ( "+",".join(common_columns)+") VALUES (" + ",".join(map(str,quoted_row1)) + ");"
+        delete_query = f"delete from {destination_table} where id={id};"
+        destination_cursor.execute(delete_query)
+        insert_query = f"INSERT INTO {destination_table} ( "+",".join(common_columns)+") VALUES (" + ",".join(map(str,quoted_row1)) + ");"
         print(insert_query)
         destination_cursor.execute(insert_query)
     source_cursor.close()

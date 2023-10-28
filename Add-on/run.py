@@ -19,7 +19,7 @@ if __name__ == "__main__":
     'host': '151.181.203.21',
     'user': 'owuser',
     'password': 'pass4owCluster',
-    'database': 'owcluster1',}
+    'database': 'owcluster',}
     }
     argn=len(sys.argv)
     if argn==3 and sys.argv[1]=="import":
