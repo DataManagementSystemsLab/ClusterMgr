@@ -33,6 +33,7 @@ def check_query_1(cnx,user, password,eventtime):
 
     row= dba.run_query(cnx,q, (user,passwd))
     if  row:
+          row=row[0]
           print(row)
           id=row[0]
           secret_key=row[1]
