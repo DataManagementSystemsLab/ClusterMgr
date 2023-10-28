@@ -37,7 +37,7 @@ if __name__ == "__main__":
                 source_db.close()
             except:
                 traceback.print_exc()    
-    elif argn==3 and sys.argv[1]=="email":
+    elif argn==2 and sys.argv[1]=="email":
             try:
                 source_db = mysql.connector.connect(**dbs['localdb'])
                 users.send_owaccount_emails(source_db)

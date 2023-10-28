@@ -33,3 +33,5 @@ terraform 1234
 
 
 docker_raduis_python needs some refactoring
+
+make sure to if reimport the same data 
