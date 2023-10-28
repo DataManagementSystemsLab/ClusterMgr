@@ -36,3 +36,9 @@ if __name__ == "__main__":
             sync.move_data(source_db,destination_db,"users","users")
             source_db.close()
             destination_db.close()
+    elif argn==2 and sys.argv[1]=="rsync":
+            source_db = mysql.connector.connect(**dbs['remotedb'])
+            destination_db = mysql.connector.connect(**dbs['localdb'])
+            sync.move_data(source_db,destination_db,"users","users")
+            source_db.close()
+            destination_db.close()
