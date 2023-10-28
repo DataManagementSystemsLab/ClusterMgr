@@ -15,13 +15,13 @@ def connect_base(host, user, password):
       print("Returing None a")
       return None
 
-def connect():
+def connect_():
   host='127.0.0.1'
   user='root'
   password='1234'
   return connect_base(host,user,password)
 
-def connect_():
+def connect():
    HOST=os.environ.get('DB_HOST')
    USER=os.environ.get('DB_USER')
    PASS=os.environ.get('DB_PASS')
