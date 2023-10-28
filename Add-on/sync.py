@@ -2,33 +2,18 @@ import mysql.connector
 #fix identation
 # Establish connections to the source and target databases
 
-source_db_config = {
-    'host': '127.0.0.1',
-    'user': 'owuser',
-    'password': 'pass4owCluster',
-    'database': 'owcluster',
-}
-
-destination_db_config = {
-    #151.181.203.21
-    'host': '127.0.0.1',
-    'user': 'owuser',
-    'password': 'pass4owCluster',
-    'database': 'owcluster1',
-}
 
 # Connect to the source and destination d
 # atabases
-source_db = mysql.connector.connect(**source_db_config)
-destination_db = mysql.connector.connect(**destination_db_config)
+
 # Create cursors
-source_cursor = source_db.cursor()
-destination_cursor = destination_db.cursor()
 
 
 
-def move_data(source_cursor, destination_cursor, source_table, destination_table):
 
+def move_data(source_db, destination_db, source_table, destination_table):
+    source_cursor = source_db.cursor()
+    destination_cursor = destination_db.cursor()
     source_cursor.execute(f"SHOW COLUMNS FROM {source_table}")
     columns_table1 = [column[0] for column in source_cursor.fetchall()]
 
@@ -57,17 +42,18 @@ def move_data(source_cursor, destination_cursor, source_table, destination_table
         insert_query = f"delete from {destination_table} where id={id}; INSERT INTO {destination_table} ( "+",".join(common_columns)+") VALUES (" + ",".join(map(str,quoted_row1)) + ");"
         print(insert_query)
         destination_cursor.execute(insert_query)
+    source_cursor.close()
+    destination_cursor.close()    
+    destination_db.commit()
 
-    # Commit the changes to the destination database
-    
 # Define the table names in the source and destination
-source_table = 'users'
-destination_table = 'users'    
+#source_table = 'users'
+#destination_table = 'users'    
     
-move_data(source_cursor, destination_cursor, source_table, destination_table)
-destination_db.commit()
+#move_data(source_cursor, destination_cursor, source_table, destination_table)
+#destination_db.commit()
 
 # Close the database connections
-source_db.close()
-destination_db.close()
+#source_db.close()
+#destination_db.close()
 
