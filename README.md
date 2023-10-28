@@ -29,3 +29,7 @@ mk 1234
 
 mysql local password (151.181.203.21)
 terraform 1234
+
+
+
+docker_raduis_python needs some refactoring

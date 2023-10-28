@@ -2,7 +2,7 @@
 import radiusd
 import sys
 import db_access as dba
-
+import utils
 # Check post_auth for the most complete example using different
 # input and output formats
 cnx=None
@@ -36,7 +36,7 @@ def authorize(p):
   cnx=dba.connect()
   print(cnx)
 
-  ac,reply=  dba.check_authorize(cnx,d)
+  ac,reply=  utils.check_authorize(cnx,d)
   print ("reply")
   print(reply)
   print (ac)

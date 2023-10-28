@@ -28,7 +28,7 @@ COPY default /etc/freeradius/3.0/sites-available/default
 COPY clients.conf /etc/freeradius/3.0/clients.conf
 COPY otp_auth.py  /etc/freeradius/3.0/mods-config/python3/otp_auth.py
 COPY db_access.py  /etc/freeradius/3.0/mods-config/python3/db_access.py
-COPY util.py  /etc/freeradius/3.0/mods-config/python3/util.py
+COPY utils.py  /etc/freeradius/3.0/mods-config/python3/utils.py
 
 
 #COPY authorize /etc/freeradius/3.0/mods-config/files/authorize

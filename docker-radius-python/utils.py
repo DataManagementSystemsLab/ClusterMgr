@@ -1,5 +1,9 @@
 import hashlib
 from datetime import datetime
+import utils
+import db_access as dba
+import time
+import pyotp
 def get_hash_password(user, p):
     st= user+p
     h1=hashlib.sha1(st.encode("utf-8"))
@@ -7,12 +11,12 @@ def get_hash_password(user, p):
 
 def record_action(cnx,id, user,action):
     q=f" insert into owcluster.logs values ( %s,%s,now(),%s);commit;" 
-    run_query(cnx,q,(id,user,action ))
+    dba.run_query(cnx,q,(id,user,action ))
 
-def insert_user(cnx,user,passwd, secret_key, email):
-    q=f"insert into owcluster.users(username, passwd,secret_key, grp, email ) values (%s,%s,%s, 'GP_Students', %s);commit;"
-    passwd=util.get_hash_password(user, passwd)
-    run_query(cnx,q,(user,passwd,secret_key,email ))
+#def insert_user(cnx,user,passwd, secret_key, email):
+#    q=f"insert into owcluster.users(username, passwd,secret_key, grp, email ) values (%s,%s,%s, 'GP_Students', %s);commit;"
+#    passwd=util.get_hash_password(user, passwd)
+#    run_query(cnx,q,(user,passwd,secret_key,email ))
 
 def check_query_1(cnx,user, password,eventtime):
     timestamp = datetime.strptime(eventtime, '%b %d %Y %H:%M:%S %Z')
@@ -27,7 +31,7 @@ def check_query_1(cnx,user, password,eventtime):
     grp =""
     passwd=utils.get_hash_password(user, passwd)
 
-    row= run_query(cnx,q, (user,passwd))
+    row= dba.run_query(cnx,q, (user,passwd))
     if  row:
           secret_key=row[1]
           id=row[0]
