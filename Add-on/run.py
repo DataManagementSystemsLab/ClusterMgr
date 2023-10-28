@@ -30,10 +30,10 @@ if __name__ == "__main__":
                 source_db.close()
             except:
                 traceback.print_exc()    
-    if argn==3 and sys.argv[1]=="create":
+    if argn==2 and sys.argv[1]=="create":
             try:
                 source_db = mysql.connector.connect(**dbs['localdb'])
-                users.create_accounts(source_db,sys.argv[2])
+                users.create_accounts(source_db)
                 source_db.close()
             except:
                 traceback.print_exc()    
