@@ -1,8 +1,0 @@
-- name: test
-  hosts: localhost
- 
-  tasks:
-  - name: Creates directory
-    file:
-      path: /src/www
-      state: directory

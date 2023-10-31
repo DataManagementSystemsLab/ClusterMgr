@@ -1,9 +1,0 @@
-insert into vms(username,  email, ipaddr) values ('khalefam', 'khalefam@oldwestbury.edu','10.100.5.50' );
-insert into vms(username,  email, ipaddr) values ('pchau1', 'pchau1@oldwestbury.edu','10.100.5.51' );
-insert into vms(username,  email, ipaddr) values ('emastroc', 'emastroc@oldwestbury.edu','10.100.5.52' );
-insert into vms(username,  email, ipaddr) values ('vyashaev', 'vyashaev@oldwestbury.edu','10.100.5.53' );
-insert into vms(username,  email, ipaddr) values ('kthomp39', 'kthomp39@oldwestbury.edu','10.100.5.54' );
-insert into vms(username,  email, ipaddr) values ('noutsosc', 'noutsosc@oldwestbury.edu','10.100.5.55' );
-insert into vms(username,  email, ipaddr) values ('jcozzoli', 'jcozzoli@oldwestbury.edu','10.100.5.56' );
-insert into vms(username,  email, ipaddr) values ('cpeter16', 'cpeter16@oldwestbury.edu','10.100.5.57' );
-nsert into vms(username,  email, ipaddr) values ('balyanr', 'balyanr@oldwestbury.edu','10.100.5.58' );

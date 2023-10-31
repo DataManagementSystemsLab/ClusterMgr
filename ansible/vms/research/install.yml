@@ -1,6 +1,6 @@
 ---
 - name: Install Python, Jupyter, and Python packages
-  hosts: renu_servers
+  hosts: vms
   become: yes
   vars:
     user_data:
