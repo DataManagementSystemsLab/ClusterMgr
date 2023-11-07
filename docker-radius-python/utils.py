@@ -38,7 +38,7 @@ def check_query_1(cnx,user, password,eventtime):
     curx.execute(q,(user,passwd))
     rows=curx.fetchall()
     if len(rows)>0:
-          row=row[0]
+          row=rows[0]
           print(row)
           id=row[0]
           secret_key=row[1]
