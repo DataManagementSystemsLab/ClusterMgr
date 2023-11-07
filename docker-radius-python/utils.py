@@ -9,11 +9,11 @@ def get_hash_password(user, p):
     h1=hashlib.sha1(st.encode("utf-8"))
     return str(h1.hexdigest())
 
-def record_action(cnx,id, user,action):
-    q=f" insert into owcluster.logs(username,tm,act) values ( %s,now(),%s);" 
+def record_action(cnx, idx, user,action,ipaddr):
+    q=f" insert into owcluster.logs(idx,username,tm,act,ipaddr) values (%d, %s,now(),%s,%s);" 
     #dba.run_query(cnx,q,(id,user,action ))
     curx=cnx.cursor()
-    curx.execute(q,(id,user,action ))
+    curx.execute(q,(idx, user,action,ipaddr ))
     cnx.commit()
 
 
@@ -44,9 +44,13 @@ def check_query_1(cnx,user, password,eventtime):
           secret_key=row[1]
           grp=row[2]
           totp = pyotp.TOTP(secret_key)
+          prev_comp=-1
           for delta in range(-50,100,4):
             comp=totp.at(unix_timestamp+delta)
             comp= int(comp)
+            if comp==prev_comp:
+                continue
+            prev_comp=comp
             print(comp)
             is_valid = comp == code
             if is_valid:
@@ -74,6 +78,7 @@ def check_authorize(cnx,d):
     user=d['User-Name']
     password=d["User-Password"]
     eventtime=d["Event-Timestamp"]
+    ipaddr=d["Framed-IP-Address"]
     retval= False
     act= "reject"
     idx=-1
@@ -93,6 +98,6 @@ def check_authorize(cnx,d):
         "config": (("Auth-Type","Accept"),),
         }          
 
-    record_action(cnx,idx,user,act)
+    record_action(cnx,idx,user,act,ipaddr)
     return retval, res
     
