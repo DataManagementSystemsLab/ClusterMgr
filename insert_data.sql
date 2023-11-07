@@ -8,6 +8,8 @@ insert into vms(indx,hostname,vcpu,memory,ipaddr,macaddr,location) values (10,'d
 insert into vms(indx,hostname,vcpu,memory,ipaddr,macaddr,location) values (11,'net0',2,4,'10.100.4.56','ae:52:00:00:04:0b', 'owhpc-00' );
 insert into vms(indx,hostname,vcpu,memory,ipaddr,macaddr,location) values (12,'net1',2,4,'10.100.4.57','ae:52:00:00:04:0c', 'owhpc-01' );
 
+insert into vms(indx,hostname,vcpu,memory,ipaddr,macaddr,location) values (13,'vm1',2,4,'10.100.4.58','ae:52:00:00:04:0d', 'owhpc-05' );
+
 
 insert into vms(indx,hostname,vcpu,memory,ipaddr,macaddr,location) values (20,'pchau1',2,4, '10.100.6.50','ae:52:00:00:04:00', 'owhpc-00' );
 insert into vms(indx,hostname,vcpu,memory,ipaddr,macaddr,location) values (21,'emastroc',2,4,'10.100.6.51','ae:52:00:00:04:01','owhpc-00' );
