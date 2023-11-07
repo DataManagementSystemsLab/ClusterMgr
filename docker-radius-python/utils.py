@@ -10,7 +10,7 @@ def get_hash_password(user, p):
     return str(h1.hexdigest())
 
 def record_action(cnx,id, user,action):
-    q=f" insert into owcluster.logs values ( %s,%s,now(),%s);" 
+    q=f" insert into owcluster.logs(username,tm,act) values ( %s,now(),%s);" 
     #dba.run_query(cnx,q,(id,user,action ))
     curx=cnx.cursor()
     curx.execute(q,(id,user,action ))
