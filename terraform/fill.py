@@ -10,7 +10,7 @@ output_path = "output.txt"
 def fill(config,loc):
     source_db = mysql.connector.connect(**source_db_config)
     source_cursor = source_db.cursor()
-    source_cursor.execute(f"select  indx, ipaddr as ip, memory*1024*1024 as memory, vcpu,macaddr as mac, hostname from vms where location = '{loc}';")
+    source_cursor.execute(f"select  indx, ipaddr as ip, memory*1024 as memory, vcpu,macaddr as mac, hostname from vms where location = '{loc}';")
 
     columns = [column[0] for column in source_cursor.description]
 
