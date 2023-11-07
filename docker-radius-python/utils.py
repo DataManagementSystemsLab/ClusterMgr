@@ -75,10 +75,11 @@ def check_query_1(cnx,user, password,eventtime):
 
 
 def check_authorize(cnx,d):
+    print(d)
     user=d['User-Name']
     password=d["User-Password"]
-    eventtime=d["Event-Timestamp"]
-    ipaddr=d["Framed-IP-Address"]
+    eventtime=d["Event-Timestamp"]  if "Event-Timestamp" in d else ""
+    ipaddr=d["Framed-IP-Address"] if "Framed-IP-Address" in d else ""
     retval= False
     act= "reject"
     idx=-1
