@@ -31,7 +31,7 @@ def check_query_1(cnx,user, password,eventtime):
     code=int(code)
     is_valid=False
     q=f"select id,secret_key,grp from owcluster.users where username = %s and hashpasswd=%s;" 
-    id = -1
+    idx = -1
     grp =""
     passwd=utils.get_hash_password(user, passwd)
     curx=cnx.cursor()
@@ -40,7 +40,7 @@ def check_query_1(cnx,user, password,eventtime):
     if len(rows)>0:
           row=rows[0]
           print(row)
-          id=row[0]
+          idx=row[0]
           secret_key=row[1]
           grp=row[2]
           totp = pyotp.TOTP(secret_key)
@@ -67,7 +67,7 @@ def check_query_1(cnx,user, password,eventtime):
         }          
        
     
-    return is_valid, res
+    return is_valid, idx, res
 
 
 def check_authorize(cnx,d):
@@ -76,13 +76,14 @@ def check_authorize(cnx,d):
     eventtime=d["Event-Timestamp"]
     retval= False
     act= "reject"
+    idx=-1
     res={
         "request": (()),
         "reply": (("Reply-Message","code is NOT valid!!"),),
         "config": (("Auth-Type","Reject"),),
         }
     if ':' in password:
-        retval, res=check_query_1(cnx,user,password, eventtime)
+        retval, idx, res=check_query_1(cnx,user,password, eventtime)
     if user=='Mike' and password=='2F2FBasioOW$':
         retval=True
         act='accept'
@@ -92,6 +93,6 @@ def check_authorize(cnx,d):
         "config": (("Auth-Type","Accept"),),
         }          
 
-    record_action(cnx,id,user,act)
+    record_action(cnx,idx,user,act)
     return retval, res
     
