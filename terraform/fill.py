@@ -28,7 +28,7 @@ def fill(config,loc):
 if __name__ == "__main__":
     loc=sys.argv[1]
     source_db_config = {
-    'host': '127.0.0.1',
+    'host': '10.100.1.0',
     'user': 'owuser',
     'password': 'pass4owCluster',
     'database': 'owcluster',
