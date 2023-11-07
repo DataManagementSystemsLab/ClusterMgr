@@ -10,8 +10,12 @@ def get_hash_password(user, p):
     return str(h1.hexdigest())
 
 def record_action(cnx,id, user,action):
-    q=f" insert into owcluster.logs values ( %s,%s,now(),%s);commit;" 
-    dba.run_query(cnx,q,(id,user,action ))
+    q=f" insert into owcluster.logs values ( %s,%s,now(),%s);" 
+    #dba.run_query(cnx,q,(id,user,action ))
+    curx=cnx.cursor()
+    curx.execute(q,(id,user,action ))
+    cnx.commit()
+
 
 #def insert_user(cnx,user,passwd, secret_key, email):
 #    q=f"insert into owcluster.users(username, passwd,secret_key, grp, email ) values (%s,%s,%s, 'GP_Students', %s);commit;"
@@ -26,13 +30,14 @@ def check_query_1(cnx,user, password,eventtime):
     code=password[i+1:]
     code=int(code)
     is_valid=False
-    q=f"select  id,secret_key,grp from owcluster.users where username = %s and hashpasswd=%s;" 
+    q=f"select id,secret_key,grp from owcluster.users where username = %s and hashpasswd=%s;" 
     id = -1
     grp =""
     passwd=utils.get_hash_password(user, passwd)
-
-    row= dba.run_query(cnx,q, (user,passwd))
-    if  row:
+    curx=cnx.cursor()
+    curx.execute(q,(user,passwd))
+    rows=curx.fetchall()
+    if len(rows)>0:
           row=row[0]
           print(row)
           id=row[0]
@@ -61,34 +66,32 @@ def check_query_1(cnx,user, password,eventtime):
         "config": (("Auth-Type","Reject"),),
         }          
        
-    record_action(cnx,id,user,act)
+    
     return is_valid, res
 
 
 def check_authorize(cnx,d):
-  
     user=d['User-Name']
     password=d["User-Password"]
     eventtime=d["Event-Timestamp"]
-
+    retval= False
+    act= "reject"
+    res={
+        "request": (()),
+        "reply": (("Reply-Message","code is NOT valid!!"),),
+        "config": (("Auth-Type","Reject"),),
+        }
     if ':' in password:
-        c, res=check_query_1(cnx,user,password, eventtime)
-        #print("RES")
-        #print(res)
-        return c, res
+        retval, res=check_query_1(cnx,user,password, eventtime)
     if user=='Mike' and password=='2F2FBasioOW$':
+        retval=True
         act='accept'
         res={
         "request": (()),
         "reply": (("Reply-Message","Hi from the Other side.."),("PaloAlto-User-Group",":=", "AA")),
         "config": (("Auth-Type","Accept"),),
         }          
-        return True, res
+
+    record_action(cnx,id,user,act)
+    return retval, res
     
-    act= "reject"
-    res={
-        "request": (()),
-        "reply": (("Reply-Message","code is NOT valid!!"),),
-        "config": (("Auth-Type","Reject"),),
-        }          
-    return False, res
