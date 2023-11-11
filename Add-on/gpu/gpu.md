@@ -1,5 +1,36 @@
 
-   
+### Allow GPU
+
+1- sudo dmesg |grep -e IOMMU
+
+if not, open  /etc/default/grub
+add ```
+GRUB_CMDLINE_LINUX_DEFAULT="intel_iommu=on"
+```
+
+```
+cp modules /etc/modules
+
+```
+
+```
+cp blacklist-nouveau.conf /etc/modprobe.d/blacklist-nouveau.conf
+
+```
+
+
+Then, you need to
+``` 
+ sudo update-grub
+ sudo update-initramfs -u                                                         
+
+```
+then, reboot
+
+
+
+## Instal GPU
+
 ```
    sudo apt install -y gcc nvidia-driver-535-server-open nvidia-cuda-toolkit
    sudo apt update
@@ -9,32 +40,6 @@
    pip3 install torch torchvision torchaudio
 ```
 https://drakeor.com/2022/02/16/kvm-gpu-passthrough-tutorial/
-
-
-First, we need to make sure if iommu is enabled
-sudo dmesg |grep -e IOMMU
-
-if not, open  /etc/default/grub
-add ```
-
-GRUB_CMDLINE_LINUX_DEFAULT="intel_iommu=on"
-```
-
-Then, you need to
-``` 
- sudo update-grub
-```
-then, reboot
-
-vfio are added by default I guess that you do not have to specify them 
-
- vfio
- vfio_iommu_type1
- vfio_pci
- vfio_virqfd
-
-
-
 Reference: https://leduccc.medium.com/simple-dgpu-passthrough-on-a-dell-precision-7450-ebe65b2e648e
 
 https://pve.proxmox.com/wiki/PCI(e)_Passthrough
@@ -72,3 +77,11 @@ echo "blacklist nouveau" | sudo tee /etc/modprobe.d/blacklist-nouveau.conf
 echo "options nouveau modeset=0" | sudo tee -a /etc/modprobe.d/blacklist-nouveau.conf
 sudo update-initramfs -u                                                         
 sudo reboot   
+
+
+vfio are added by default I guess that you do not have to specify them 
+
+ vfio
+ vfio_iommu_type1
+ vfio_pci
+ vfio_virqfd
