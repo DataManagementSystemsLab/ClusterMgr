@@ -11,7 +11,7 @@ ipaddr varchar(15);
 Create table if not exists owcluster.vms (id int primary key AUTO_INCREMENT, indx int,
  ipaddr VARCHAR(15) unique, memory int, vcpu int,  vmtype varchar(10),
   macaddr varchar(30) unique,hostname varchar(30) unique, disk_image varchar(40),
-   location varchar(10));
+   location varchar(10), managed boolean, notes varchar(100)));
 
 create table if not exists  owcluster.vmusers (id int primary key AUTO_INCREMENT, 
 vmindx int, username varchar(15) unique ,passwd varchar(20), superuser boolean, sent boolean);

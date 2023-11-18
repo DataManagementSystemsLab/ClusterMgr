@@ -168,3 +168,8 @@ tmpfs                                5.3M     0  5.3M   0% /run/lock
 tmpfs                                512M     0  512M   0% /sys/fs/cgroup
 /dev/vda1                            495M  109M  361M  24% /boot
 tmpfs                                103M     0  103M   0% /run/user/0
+
+
+
+# lvextend -L+1G /dev/myvg/homevol
+# resize2fs /dev/myvg/homevol
