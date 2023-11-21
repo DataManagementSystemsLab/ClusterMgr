@@ -14,6 +14,8 @@ Create table if not exists owcluster.vms (id int primary key AUTO_INCREMENT, ind
    location varchar(10), managed boolean, notes varchar(100)));
 
 create table if not exists  owcluster.vmusers (id int primary key AUTO_INCREMENT, 
-vmindx int, username varchar(15) unique ,passwd varchar(20), superuser boolean, sent boolean);
+vmindx int, username varchar(15)  ,passwd varchar(20), superuser boolean, sent boolean,
+unique (vmindx, username));
+);
 
 
