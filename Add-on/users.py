@@ -25,9 +25,10 @@ def send_owaccount_emails(conn):
 
 
 def send_vmusers_emails(conn):
-    q='''select u.id,u.firstname, vu.username, vu.passwd, v.ipaddr, u.email from users u, vmusers vu, vms v 
-      where u.id = vu.userid and vu.vmindx=v.indx and ((sent is NULL) or (sent=False));'''
-    results=conn.execute(q).fetchall()
+    q='''select uv.id,u.firstname, vu.username, vu.passwd, v.ipaddr, u.email from owcluster.users u, owcluster.vmusers vu,
+      oecluster.vms v  where u.id = vu.userid and vu.vmindx=v.indx and ((sent is NULL) or (sent=False));'''
+    cur=conn.cursor()
+    results=cur.execute(q).fetchall()
     for row in  results:
         id=row[0]
         firstname=row[1]

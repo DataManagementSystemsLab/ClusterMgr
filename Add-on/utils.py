@@ -125,7 +125,7 @@ def send_vm_email(username, password, firstname, ipaddr,user_email):
     '''
     msg['Subject'] = "Credentials for VM"
     msg['From'] = sender_email
-    msg['To'] = "khalefaow@gmail.com"
+    msg['To'] = user_email
 
     msg.attach(MIMEText(body, 'html'))
     
