@@ -49,6 +49,10 @@ if __name__ == "__main__":
                 source_db = mysql.connector.connect(**dbs['localdb'])
                 destination_db = mysql.connector.connect(**dbs['remotedb'])
                 sync.move_data(source_db,destination_db,"users","users")
+                sync.move_data(source_db,destination_db,"users","users")
+                sync.move_data(source_db,destination_db,"logs","logs")
+                sync.move_data(source_db,destination_db,"vmusers","vmusers")
+                sync.move_data(source_db,destination_db,"vms","vms")
                 source_db.close()
                 destination_db.close()
             except:
@@ -58,6 +62,9 @@ if __name__ == "__main__":
                 source_db = mysql.connector.connect(**dbs['remotedb'])
                 destination_db = mysql.connector.connect(**dbs['localdb'])
                 sync.move_data(source_db,destination_db,"users","users")
+                sync.move_data(source_db,destination_db,"logs","logs")
+                sync.move_data(source_db,destination_db,"vmusers","vmusers")
+                sync.move_data(source_db,destination_db,"vms","vms")
                 source_db.close()
                 destination_db.close()
             except:

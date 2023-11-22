@@ -3,7 +3,7 @@ import sys
 import db_access as dba
 import pyotp
 def send_owaccount_emails(conn):
-    users=dba.run_query(conn,"SELECT id, username, email, passwd, firstname, secret_key FROM owcluster.users where email is not null and sent is NULL;",None)
+    users=dba.run_query(conn,"SELECT id, username, email, passwd, firstname, secret_key FROM owcluster.users where email is not null and ((sent is NULL) or (sent=False));",None)
     for row in  users:
         #print(row)
       try:
@@ -25,20 +25,24 @@ def send_owaccount_emails(conn):
 
 
 def send_vmusers_emails(conn):
-    results=conn.execute("SELECT id,username, email, ipaddr FROM owcluster.vmusers where sent is NULL;").fetchall()
+    q='''select u.id,u.firstname, vu.username, vu.passwd, v.ipaddr, u.email from users u, vmusers vu, vms v 
+      where u.id = vu.userid and vu.vmindx=v.indx and ((sent is NULL) or (sent=False));'''
+    results=conn.execute(q).fetchall()
     for row in  results:
         id=row[0]
-        username=row[1]
-        user_email=row[2]
-        ipaddr=row[3]
-        utils.send_vm_email(username, ipaddr , user_email)
+        firstname=row[1]
+        username=row[2]
+        password=row[3]
+        ipaddr=row[4]
+        user_email=row[5]
+        utils.send_vm_email(username, password, firstname,ipaddr , user_email)
         Q=f"UPDATE owcluster.vmusers SET sent = True WHERE id = '{id}';"
         dba.run_query(conn,Q,None)
     conn.commit()
 
 
 def create_accounts(conn):
-  users=dba.run_query(conn,"select id, username from owcluster.users where created is Null;",None)
+  users=dba.run_query(conn,"select id, username from owcluster.users where (created is Null) or (Created=False);",None)
   for user in users:
     id=user[0]
     username=user[1]

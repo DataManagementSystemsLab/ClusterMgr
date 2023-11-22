@@ -86,7 +86,6 @@ def send_account_email( userid, username, passwd ,firstname, user_email, secret_
   <b>password</b>: '<u>{passwd}</u>' followed by ':' then the code from authenticator app from the attached image. <br/>
   '''
    
-
     msg['Subject'] = "Credentials for OWCluster Account!"
     msg['From'] = sender_email
     msg['To'] = user_email
@@ -113,20 +112,22 @@ def send_account_email( userid, username, passwd ,firstname, user_email, secret_
         server.login(sender_email, gmailpassword)
         server.send_message(msg, from_addr=sender_email, to_addrs=user_email)
     
-    
-    
-def send_vm_email(username, ipaddr , user_email):
+
+def send_vm_email(username, password, firstname, ipaddr,user_email):
     msg = MIMEMultipart()
-    body = "Account Information VM\n\n" 
-    body += "IP: "+ipaddr+"\n\n"
-    body += "Username: "+username+"\n\n"
-    body += "Password: "+"owclusterpass1"+"\n\n"
-    
+    body = f'''
+    Hi {firstname},<br/>
+    <br/>
+    To access the VM use the following credentials: <br/>
+        IP:  {ipaddr}<br/>
+       Username:  {username}<br/>
+       Password: {password} <br/>
+    '''
     msg['Subject'] = "Credentials for VM"
     msg['From'] = sender_email
-    msg['To'] = user_email
-    
-    msg.attach(MIMEText(body, 'plain'))
+    msg['To'] = "khalefaow@gmail.com"
+
+    msg.attach(MIMEText(body, 'html'))
     
     
     context = ssl.create_default_context()

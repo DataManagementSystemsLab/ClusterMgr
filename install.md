@@ -19,8 +19,6 @@ ansible playbook -k (you specify sudo password)
 ```
   
   
-
-
 ### Installation steps For a fresh physical servers:
 
  1. install cloud strike
