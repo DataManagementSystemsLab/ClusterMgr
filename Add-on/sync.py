@@ -1,4 +1,5 @@
 import mysql.connector
+import datetime
 #fix identation
 # Establish connections to the source and target databases
 
@@ -36,7 +37,7 @@ def move_data(source_db, destination_db, source_table, destination_table):
         # For example, you can deserialize JSON or parse text data from the source table
         # and then insert it into the destination table
         # For this example, we are directly inserting the data
-        quoted_row = ['"' + str(value) + '"' if isinstance(value, str) or isinstance(value,dateime.dateime) else value for value in row]
+        quoted_row = ['"' + str(value) + '"' if isinstance(value, str) or isinstance(value,datetime.datetime) else value for value in row]
         quoted_row1 = ["Null" if value is None else value for value in quoted_row]
         id=quoted_row1[common_columns.index('id')]
         delete_query = f"delete from {destination_table} where id={id};"

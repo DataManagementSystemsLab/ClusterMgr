@@ -43,6 +43,13 @@ if __name__ == "__main__":
                 users.send_owaccount_emails(source_db)
                 source_db.close()
             except:
+                traceback.print_exc()   
+    elif argn==2 and sys.argv[1]=="emailvms":
+            try:
+                source_db = mysql.connector.connect(**dbs['localdb'])
+                users.send_vmusers_emails(source_db)
+                source_db.close()
+            except:
                 traceback.print_exc()    
     elif argn==2 and sys.argv[1]=="sync":
             try:

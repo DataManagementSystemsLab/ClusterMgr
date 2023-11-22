@@ -10,7 +10,7 @@ def run_command_remotely_asroot(host, username, password, commands):
 		root_command = f'sudo su - '
 		root_shell = ssh.invoke_shell()
 		root_shell.send(root_command + '\n')
-		root_shell.send(password + '\n')
+		#root_shell.send(password + '\n')
 		time.sleep(0.1)
 		while not root_shell.recv_ready():
 			pass
