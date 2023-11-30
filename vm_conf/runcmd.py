@@ -19,6 +19,7 @@ def run_command_remotely_asroot(host, username, password, commands):
 		print("---------login----------------")
 		
 		for command in commands:
+			print(command)
 			root_shell.send(command + '\n')
 			time.sleep(0.1)
 			while not root_shell.recv_ready():
