@@ -41,5 +41,5 @@ class AddUser:
 		self.password = password
 	def __str__(self) -> str:
 		hashedpassword = crypt.crypt(self.password)
-		return f"useradd -m {self.username} -p '{hashedpassword}'"
+		return f"useradd -m {self.username} -p '{hashedpassword} -s /bin/bash'"
 

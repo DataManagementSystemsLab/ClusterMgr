@@ -18,7 +18,7 @@ source_db={
 }
 source_db = mysql.connector.connect(**source_db['owhpc'])
 source_cursor = source_db.cursor()
-source_cursor.execute(f"select  ipaddr, username, superuser,passwd from vmusers u, vms v where u.vmindx=v.indx;")
+source_cursor.execute(f"select  ipaddr, username, superuser,passwd from vmusers u, vms v where u.vmindx=v.indx and applied=False;")
 
 columns = [column[0] for column in source_cursor.description]
 result_set = source_cursor.fetchall()
