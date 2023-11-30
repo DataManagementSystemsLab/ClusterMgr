@@ -18,7 +18,7 @@ source_db={
 }
 source_db = mysql.connector.connect(**source_db['owhpc'])
 source_cursor = source_db.cursor()
-source_cursor.execute(f"select  ipaddr, username, superuser,passwd from vmusers u, vms v where u.vmindx=v.indx';")
+source_cursor.execute(f"select  ipaddr, username, superuser,passwd from vmusers u, vms v where u.vmindx=v.indx;")
 
 columns = [column[0] for column in source_cursor.description]
 result_set = source_cursor.fetchall()
@@ -30,7 +30,9 @@ for row in result_set:
     superuser = row[2]
     passwd = row[3]
     user=r.AddUser(username, passwd)
-    commands = [str(user)]
+    commands=[]
+    commands.append(f'userdel {username}')
+    commands.append(str(user))
     if superuser == 1:
         commands.append(f'usermod -aG sudo {username}')
     
