@@ -41,7 +41,6 @@ def send_vmusers_emails(conn):
         dba.run_query(conn,Q,None)
     conn.commit()
 
-
 def create_accounts(conn):
   users=dba.run_query(conn,"select id, username from owcluster.users where (created is Null) or (Created=False);",None)
   for user in users:
@@ -55,7 +54,6 @@ def create_accounts(conn):
     print(Q_user)
     dba.run_query(conn,Q_user, None) 
   conn.commit()   
-
 
 def import_account(conn, filename):
    # read a file line by line and split it into fields

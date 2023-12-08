@@ -23,6 +23,15 @@ if __name__ == "__main__":
     'database': 'owcluster',}
     }
     argn=len(sys.argv)
+    if argn==2 and sys.argv[1]=="help":
+        print("python3 run import file")
+        print("python3 run email file")
+        print("python3 run sync [delete]")
+        print("\t sync from local to remote (owhpc)")
+        print("python3 run rsync [delete]")
+        print("python3 run create")
+        print("python3 run emailvms")
+        print("python3 run importvms file")
     if argn==3 and sys.argv[1]=="import":
             try:
                 source_db = mysql.connector.connect(**dbs['localdb'])
@@ -51,27 +60,35 @@ if __name__ == "__main__":
                 source_db.close()
             except:
                 traceback.print_exc()    
-    elif argn==2 and sys.argv[1]=="sync":
+    elif (argn==2 or argn==3)  and sys.argv[1]=="sync" :
             try:
+                delete=False
+                if argn == 3 and sys.argv[2]=="delete":
+                    delete=True
+
                 source_db = mysql.connector.connect(**dbs['localdb'])
                 destination_db = mysql.connector.connect(**dbs['remotedb'])
-                sync.move_data(source_db,destination_db,"users","users")
-                sync.move_data(source_db,destination_db,"users","users")
-                sync.move_data(source_db,destination_db,"logs","logs")
-                sync.move_data(source_db,destination_db,"vmusers","vmusers")
-                sync.move_data(source_db,destination_db,"vms","vms")
+                sync.move_data(source_db,destination_db,"users","users",delete)
+                sync.move_data(source_db,destination_db,"users","users",delete)
+                sync.move_data(source_db,destination_db,"logs","logs",delete)
+                sync.move_data(source_db,destination_db,"vmusers","vmusers",delete)
+                sync.move_data(source_db,destination_db,"vms","vms",delete)
                 source_db.close()
                 destination_db.close()
             except:
                 traceback.print_exc()    
-    elif argn==2 and sys.argv[1]=="rsync":
+    elif (argn==2 or argn==3) and sys.argv[1]=="rsync":
             try:
-                source_db = mysql.connector.connect(**dbs['remotedb'])
-                destination_db = mysql.connector.connect(**dbs['localdb'])
-                sync.move_data(source_db,destination_db,"users","users")
-                sync.move_data(source_db,destination_db,"logs","logs")
-                sync.move_data(source_db,destination_db,"vmusers","vmusers")
-                sync.move_data(source_db,destination_db,"vms","vms")
+                delete=False
+                if argn == 3 and sys.argv[2]=="delete":
+                    delete=True
+
+                source_db = mysql.connector.connect(**dbs['remotedb'],delete)
+                destination_db = mysql.connector.connect(**dbs['localdb'],delete)
+                sync.move_data(source_db,destination_db,"users","users",delete)
+                sync.move_data(source_db,destination_db,"logs","logs",delete)
+                sync.move_data(source_db,destination_db,"vmusers","vmusers",delete)
+                sync.move_data(source_db,destination_db,"vms","vms",delete)
                 source_db.close()
                 destination_db.close()
             except:

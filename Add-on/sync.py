@@ -8,11 +8,16 @@ import datetime
 # atabases
 
 # Create cursors
+def delete_data(destination_db, destination_table):
+    destination_cursor = destination_db.cursor()
+    delete_query = f"set sql_safe_updates =0;delete from {destination_table};"
+    destination_cursor.execute(delete_query)
+    destination_db.commit()
+    destination_cursor.close()
 
-
-
-
-def move_data(source_db, destination_db, source_table, destination_table):
+def move_data(source_db, destination_db, source_table, destination_table, delete=False):
+    if delete:
+        delete_data(destination_db, destination_table)
     source_cursor = source_db.cursor()
     destination_cursor = destination_db.cursor()
     source_cursor.execute(f"SHOW COLUMNS FROM {source_table}")

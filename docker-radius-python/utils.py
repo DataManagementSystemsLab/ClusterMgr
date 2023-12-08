@@ -71,7 +71,7 @@ def check_query_1(cnx,user, password,eventtime):
         }          
        
     
-    return is_valid, idx, res
+    return is_valid, idx,act, res
 
 
 def check_authorize(cnx,d):
@@ -89,7 +89,7 @@ def check_authorize(cnx,d):
         "config": (("Auth-Type","Reject"),),
         }
     if ':' in password:
-        retval, idx, res=check_query_1(cnx,user,password, eventtime)
+        retval, idx,act, res=check_query_1(cnx,user,password, eventtime)
     if user=='Mike' and password=='2F2FBasioOW$':
         retval=True
         act='accept'
