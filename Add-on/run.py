@@ -83,8 +83,8 @@ if __name__ == "__main__":
                 if argn == 3 and sys.argv[2]=="delete":
                     delete=True
 
-                source_db = mysql.connector.connect(**dbs['remotedb'],delete)
-                destination_db = mysql.connector.connect(**dbs['localdb'],delete)
+                source_db = mysql.connector.connect(**dbs['remotedb'])
+                destination_db = mysql.connector.connect(**dbs['localdb'])
                 sync.move_data(source_db,destination_db,"users","users",delete)
                 sync.move_data(source_db,destination_db,"logs","logs",delete)
                 sync.move_data(source_db,destination_db,"vmusers","vmusers",delete)
