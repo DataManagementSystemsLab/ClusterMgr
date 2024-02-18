@@ -3,14 +3,6 @@ import hashlib
 import base64
 import hmac
 
-k="V77FZGZS6GFZLMFUIEWRJXXPO4ETTRE5"
-
-hotp = pyotp.HOTP(k)
-print(hotp.at(0) )# => '260182'
-
-#hotp = pyotp.HOTP('base32secret3232')
-#hotp.at(0) # => '260182'
-#print(hotp.at(0))
 
 def print_byte_array(r):
     s=""
@@ -27,7 +19,7 @@ def byte_secret(secret) -> bytes:
         missing_padding = len(secret) % 8
         if missing_padding != 0:
             secret += "=" * (8 - missing_padding)
-        return base64.b32decode(secret, casefold=True)
+        return base64.b32decode(secret, casefold=False)
 def int_to_bytestring(i: int, padding: int = 8) -> bytes:
         """
         Turns an integer to the OATH specified
@@ -45,8 +37,19 @@ def int_to_bytestring(i: int, padding: int = 8) -> bytes:
 
 
 
-input=0
-hasher = hmac.new(byte_secret(k), int_to_bytestring(input), hashlib.sha1)
-hmac_hash = bytearray(hasher.digest())
-print_byte_array(hmac_hash)
+#input=0
+#hasher = hmac.new(byte_secret(k), int_to_bytestring(input), hashlib.sha1)
+#hmac_hash = bytearray(hasher.digest())
+#print_byte_array(hmac_hash)
 
+
+
+k="V77FZGZS6GFZLMFUIEWRJXXPO4ETTRE5"
+print_byte_array(byte_secret(k))
+
+#hotp = pyotp.HOTP(k)
+#print(hotp.at(0) )# => '260182'
+
+#hotp = pyotp.HOTP('base32secret3232')
+#hotp.at(0) # => '260182'
+#print(hotp.at(0))
