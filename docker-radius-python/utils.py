@@ -91,6 +91,7 @@ def check_user(row, timestart,userdigest):
     return 0, idx
 
 def check_query_2(cnx,user, userdigest,eventtime):
+    print(userdigest)
     timestamp = datetime.strptime(eventtime, '%b %d %Y %H:%M:%S %Z')
     unix_timestamp=time.mktime(timestamp.timetuple())
     is_valid=False
@@ -99,7 +100,7 @@ def check_query_2(cnx,user, userdigest,eventtime):
     grp =""
     
     curx=cnx.cursor()
-    curx.execute(q,(user))
+    curx.execute(q,(user,))
     rows=curx.fetchall()
     if len(rows)>0:
         for row in rows:
