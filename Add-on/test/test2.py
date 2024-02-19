@@ -11,7 +11,7 @@ def print_byte_array(r):
     s+= ('):')
     for i in range(len(r)):
         b=r[i:i+1]
-        s+=str(int.from_bytes(b,'big'))
+        s+=str(hex(int.from_bytes(b,'big')))
         s+=(' ' )
     s+=('\n')   
     print(s)
@@ -37,19 +37,29 @@ def int_to_bytestring(i: int, padding: int = 8) -> bytes:
 
 
 
-#input=0
-#hasher = hmac.new(byte_secret(k), int_to_bytestring(input), hashlib.sha1)
-#hmac_hash = bytearray(hasher.digest())
-#print_byte_array(hmac_hash)
-
-
+input=0
 
 k="V77FZGZS6GFZLMFUIEWRJXXPO4ETTRE5"
 print_byte_array(byte_secret(k))
+hasher = hmac.new(byte_secret(k), digestmod= hashlib.sha1)
+hmac_hash = bytearray(hasher.digest())
 
-#hotp = pyotp.HOTP(k)
-#print(hotp.at(0) )# => '260182'
+print(hmac_hash)
+print_byte_array(hmac_hash)
+
+print("-----------")
+
+hasher = hmac.new(byte_secret(k),int_to_bytestring(0), digestmod= hashlib.sha1)
+hmac_hash = bytearray(hasher.digest())
+print(hmac_hash)
+print_byte_array(hmac_hash)
+
+
+hotp = pyotp.HOTP(k)
+print(hotp.at(1) )# => '260182'
 
 #hotp = pyotp.HOTP('base32secret3232')
 #hotp.at(0) # => '260182'
 #print(hotp.at(0))
+
+

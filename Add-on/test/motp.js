@@ -75,7 +75,7 @@ MOTP.prototype.tokenize = function(options) {
 		| (hash[offset + 2] & 0xff) << 8
 		| (hash[offset + 3] & 0xff);
 	
-	console.log("Tpken"+binary.toString(2));	
+	console.log("Token"+binary.toString(2));	
 	let token = new String(binary % Math.pow(10, num_digits));
 	while (token.length < num_digits) {
 		token = '0' + token.toString();

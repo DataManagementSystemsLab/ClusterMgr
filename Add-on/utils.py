@@ -7,6 +7,7 @@ from email import encoders
 from email.mime.application import MIMEApplication
 import pyotp
 import time
+import json
 
 import qrcode
 #import matplotlib.pyplot as plt
@@ -55,7 +56,14 @@ def gen_qrcode(username, secret_key):
     img = qr.make_image(fill_color="white", back_color="green")
     img.save("qrcode_"+username+".png")
 
-
+def generate_json_file(username,   passwd ,secret_key):
+    data = {
+        "user": username,
+        "password":passwd,
+        "secret": secret_key
+    }
+    with open("credentials.json", "w") as write_file:
+        json.dump(data, write_file)
 
 def send_account_email( userid, username, passwd ,firstname, user_email, secret_key):
     msg = MIMEMultipart()
@@ -105,6 +113,16 @@ def send_account_email( userid, username, passwd ,firstname, user_email, secret_
         part = MIMEApplication(attachment.read(), Name="owcertificate.zip")
         part['Content-Disposition'] = f'attachment; filename="{part.get_filename()}"'
     msg.attach(part)
+
+    ##add file
+    generate_json_file(username, passwd, secret_key)
+    attachment_path = "credentials.json"  # Replace with the path to your ZIP file
+    with open(attachment_path, "rb") as attachment:
+        part = MIMEApplication(attachment.read(), Name="credentials.json")
+        part['Content-Disposition'] = f'attachment; filename="{part.get_filename()}"'
+    msg.attach(part)
+
+
 
 
     context = ssl.create_default_context()

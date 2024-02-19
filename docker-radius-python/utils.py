@@ -4,10 +4,6 @@ import utils
 import db_access as dba
 import time
 import pyotp
-def get_hash_password(user, p):
-    st= user+p
-    h1=hashlib.sha1(st.encode("utf-8"))
-    return str(h1.hexdigest())
 
 def record_action(cnx, idx, user,action,ipaddr):
     q=f" insert into owcluster.logs(idx,username,tm,actn,ipaddr) values (%s, %s,now(),%s,%s);" 
@@ -73,6 +69,62 @@ def check_query_1(cnx,user, password,eventtime):
     
     return is_valid, idx,act, res
 
+def xor_bytes(byte_array1, byte_array2):
+    result = bytes(b1 ^ b2 for b1, b2 in zip(byte_array1, byte_array2))
+    return result
+def check_user(row, timestart,userdigest):
+    idx=row[0]
+    secret_key=row[1]
+    grp=row[2]
+    hpasswd=bytes.fromhex(row[3])
+    totp = pyotp.HOTP(secret_key)
+    counter=int(timestart/30)
+    
+    for delta in range(-5,5,1):
+        user_code=totp.at(counter)
+        print(user_code)
+        generated_code = hashlib.sha1(user_code.encode()).digest()
+        gendigest = xor_bytes(hpasswd, generated_code)
+        is_valid = gendigest==userdigest
+        if is_valid:
+                return 1, idx
+    return 0, idx
+
+def check_query_2(cnx,user, userdigest,eventtime):
+    timestamp = datetime.strptime(eventtime, '%b %d %Y %H:%M:%S %Z')
+    unix_timestamp=time.mktime(timestamp.timetuple())
+    is_valid=False
+    q=f"select id,secret_key,grp,hashpasswd from owcluster.users where username = %s;" 
+    idx = -1
+    grp =""
+    
+    curx=cnx.cursor()
+    curx.execute(q,(user))
+    rows=curx.fetchall()
+    if len(rows)>0:
+        for row in rows:
+              print(row)
+              is_valid, idx=check_user(row, unix_timestamp,userdigest)
+              if is_valid:
+                break
+    
+        if is_valid:
+            act="accept"
+            res={
+                "request": (()),
+                "reply": (("Reply-Message","Hi from the other side"),("PaloAlto-User-Group",":=", grp)),
+                "config": (("Auth-Type","Accept"),),
+            }          
+        else:
+            act= "reject"
+            res={
+                "request": (()),
+                "reply": (("Reply-Message","code is NOT valid!!")),
+                "config": (("Auth-Type","Reject"),),
+            }          
+       
+    
+    return is_valid, idx,act, res
 
 def check_authorize(cnx,d):
     print(d)
@@ -88,9 +140,11 @@ def check_authorize(cnx,d):
         "reply": (("Reply-Message","code is NOT valid!!"),),
         "config": (("Auth-Type","Reject"),),
         }
+    
+    
     if ':' in password:
         retval, idx,act, res=check_query_1(cnx,user,password, eventtime)
-    if user=='Mike' and password=='2F2FBasioOW$':
+    elif user=='Mike' and password=='2F2FBasioOW$':
         retval=True
         act='accept'
         res={
@@ -98,7 +152,8 @@ def check_authorize(cnx,d):
         "reply": (("Reply-Message","Hi from the Other side.."),("PaloAlto-User-Group",":=", "AA")),
         "config": (("Auth-Type","Accept"),),
         }          
-
+    else:
+        retval, idx,act, res=check_query_2(cnx,user,password, eventtime)
     record_action(cnx,idx,user,act,ipaddr)
     return retval, res
     
