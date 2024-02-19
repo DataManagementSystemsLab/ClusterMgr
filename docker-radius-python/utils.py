@@ -82,8 +82,8 @@ def check_user(row, timestart,userdigest):
     
     for delta in range(-5,5,1):
         user_code=totp.at(counter+delta)
-        print(counter+delta)
-        print(user_code)
+        print("counter"+str(counter+delta))
+        print("user"+str(user_code))
         generated_code = hashlib.sha1(user_code.encode()).digest()
         print(generated_code.hex())
         gendigest = xor_bytes(hpasswd, generated_code)
