@@ -88,8 +88,8 @@ def check_user(row, timestart,userdigest):
         print(generated_code.hex())
         gendigest = xor_bytes(hpasswd, generated_code)
         print(gendigest.hex())
-        print(userdigest.hex())
-        is_valid = gendigest==userdigest
+        print(userdigest)
+        is_valid = gendigest.hex()==userdigest
         print(is_valid)
         if is_valid:
                 return 1, idx
