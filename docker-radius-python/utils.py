@@ -109,20 +109,20 @@ def check_query_2(cnx,user, userdigest,eventtime):
               if is_valid:
                 break
     
-        if is_valid:
-            act="accept"
-            res={
-                "request": (()),
-                "reply": (("Reply-Message","Hi from the other side"),("PaloAlto-User-Group",":=", grp)),
-                "config": (("Auth-Type","Accept"),),
-            }          
-        else:
-            act= "reject"
-            res={
-                "request": (()),
-                "reply": (("Reply-Message","code is NOT valid!!")),
-                "config": (("Auth-Type","Reject"),),
-            }          
+    if is_valid:
+        act="accept"
+        res={
+             "request": (()),
+             "reply": (("Reply-Message","Hi from the other side"),("PaloAlto-User-Group",":=", grp)),
+             "config": (("Auth-Type","Accept"),),
+           }          
+    else:
+        act= "reject"
+        res={
+           "request": (()),
+           "reply": (("Reply-Message","code is NOT valid!!")),
+           "config": (("Auth-Type","Reject"),),
+        }          
        
     
     return is_valid, idx,act, res
