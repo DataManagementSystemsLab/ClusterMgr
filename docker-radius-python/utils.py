@@ -158,7 +158,7 @@ def check_authorize(cnx,d):
         "reply": (("Reply-Message","Hi from the Other side.."),("PaloAlto-User-Group",":=", "AA")),
         "config": (("Auth-Type","Accept"),),
         }          
-    elif password.len()==40:
+    elif len(password)==40:
         retval, idx,act, res=check_query_2(cnx,user,password, eventtime)
     record_action(cnx,idx,user,act,ipaddr)
     return retval, res
