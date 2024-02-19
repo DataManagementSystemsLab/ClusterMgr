@@ -82,15 +82,15 @@ def check_user(row, timestart,userdigest):
     
     for delta in range(-5,5,1):
         user_code=totp.at(counter+delta)
-        print("counter"+str(counter+delta))
-        print("user"+str(user_code))
+        #print("counter"+str(counter+delta))
+        #print("user"+str(user_code))
         generated_code = hashlib.sha1(user_code.encode()).digest()
-        print(generated_code.hex())
+        #print(generated_code.hex())
         gendigest = xor_bytes(hpasswd, generated_code)
-        print(gendigest.hex())
-        print(userdigest)
+        #print(gendigest.hex())
+        #print(userdigest)
         is_valid = gendigest.hex()==userdigest
-        print(is_valid)
+        #print(is_valid)
         if is_valid:
                 return 1, idx
     return 0, idx
@@ -158,7 +158,7 @@ def check_authorize(cnx,d):
         "reply": (("Reply-Message","Hi from the Other side.."),("PaloAlto-User-Group",":=", "AA")),
         "config": (("Auth-Type","Accept"),),
         }          
-    else:
+    elif password.len()==40:
         retval, idx,act, res=check_query_2(cnx,user,password, eventtime)
     record_action(cnx,idx,user,act,ipaddr)
     return retval, res
