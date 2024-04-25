@@ -1,0 +1,32 @@
+---
+- name: Install PostgreSQL and configure a database on Ubuntu
+  hosts: terrform_db
+  become: yes  # To run tasks with sudo
+
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+    - name: Install PostgreSQL and the PostgreSQL contrib package
+      apt:
+        name: 
+          - postgresql
+          - postgresql-contrib
+    - name: Install Python packages
+      pip:
+        name:
+          - psycopg2-binary
+          - psycopg2
+
+    - name: Start and enable the PostgreSQL service
+      systemd:
+        name: postgresql
+        enabled: yes
+        state: started
+
+    - name: Create a PostgreSQL database
+      postgresql_db:
+        name: owcluster
+        login_user: postgres
+        login_password: 

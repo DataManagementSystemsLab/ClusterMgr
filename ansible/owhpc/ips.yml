@@ -1,0 +1,8 @@
+---
+- name: Get IP address of remote host
+  hosts: remote_hosts
+  gather_facts: true
+  tasks:
+    - name: Display IP address
+      debug:
+        var: ansible_all_ipv4_addresses

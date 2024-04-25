@@ -1,0 +1,73 @@
+---
+- name: Install Python, Jupyter, and Python packages
+  hosts: vms
+  become: yes
+  vars:
+    user_data:
+      - name: khalefam
+        ip: 10.100.5.50
+      - name: pchau1
+        ip: 10.100.5.51
+      - name: emastroc
+        ip: 10.100.5.52
+      - name: vyashaev
+        ip: 10.100.5.53
+      - name: kthomp39
+        ip: 10.100.5.54
+      - name: noutsosc
+        ip: 10.100.5.55
+      - name: jcozzoli
+        ip: 10.100.5.56
+      - name: cpeter16
+        ip: 10.100.5.57
+      - name: balyanr
+        ip: 10.100.5.58
+ 
+ 
+  tasks:
+    - name: Install Jupyter Notebook
+      pip:
+        name: jupyter
+        state: present
+
+    - name: Install Python packages
+      pip:
+        name:
+          - pandas
+          - tensorflow
+          - torch
+          - nltk
+          - transformers
+          - gensim
+          - scikit-learn
+          - stanfordnlp
+          - bertopic
+          - networkx
+          - numpy
+          - sentence-transformers
+          - scipy
+          - spacy
+          - textblob
+          - polyglot
+          - Pattern3
+          - PyNLPl
+          - nlp
+          - requests
+        state: present
+
+    - name: Create group
+      group:
+        name: "student"
+        state: present
+
+    - name: Create users
+      user:
+        name: "{{ item.name }}"
+        state: present
+        groups: student  # Adjust group membership as needed
+        append: yes  # Add the user to groups without removing them from others
+        createhome: yes  # Create a home directory for the user
+        shell: /bin/bash  # Set the user's shell
+        password: "{{ 'owclusterpass1' | password_hash('sha512') }}"
+      loop: "{{ user_data }}"
+      when: inventory_hostname == item.ip

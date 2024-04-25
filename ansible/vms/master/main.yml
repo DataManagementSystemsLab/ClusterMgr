@@ -1,0 +1,16 @@
+---
+- name: Fetch Data from MySQL
+  hosts: vms
+  tasks:
+    - name: Query MySQL database
+      community.mysql.mysql_query:
+        login_host: 127.0.0.1
+        login_user: owuser
+        login_password: pass4owCluster
+        login_db: owcluster
+        query: "SELECT * FROM vmusers"
+      register: query_result
+
+    - name: Debug the query result
+      debug:
+        var: query_result

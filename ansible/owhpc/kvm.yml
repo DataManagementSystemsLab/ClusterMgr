@@ -1,0 +1,92 @@
+---
+- name: Install KVM
+  # missing updating /etc/
+  hosts: remote_hosts
+  become: true
+  vars:
+      poolname: "default"
+  tasks:
+      - name: Install required packages
+        package:
+            name: "{{ item }}"
+            state: present
+        loop:
+            - qemu-kvm
+            - libvirt-daemon-system
+            - libvirt-clients
+            - virtinst
+            - virt-manager
+            - bridge-utils
+            - python3-pip
+
+      - name: install lxml
+        pip: name=lxml
+
+      - name: Create the directory for the new default pool
+        file:
+            path: /pool/images
+            state: directory
+            mode: '0755'
+
+      - name: Check if default storage pool or specific pool exists
+        command: virsh pool-list --all --name
+        register: pool_list_result
+
+      - name: Remove spaces
+        set_fact:
+            cleaned_list: "{{pool_list_result.stdout_lines | map('trim') | list }}"
+
+      - name: print debug
+        debug:
+            var: cleaned_list
+
+      - name: Stop the libvirt service
+        service:
+            name: libvirtd
+            state: stopped
+
+      - name: Extract the pool configuration
+        block:
+            - name: step1
+              command: virsh pool-dumpxml default
+              register: tmp
+            - set_fact:
+                  pool_dump: "{{tmp.stdout }}"
+
+            - name: A
+              debug:
+                  var: pool_dump
+
+            - name: step2
+              community.general.xml:
+              xmlstring: "{{pool_dump}}"
+              xpath: /pool/target/path
+              value: /pool/images
+              register: tmp
+
+            - name: ss
+              debug:
+                  var: tmp
+            - name: write updated xml to a file
+              copy:
+                  content: "{{ tmp.xmlstring }}"
+                  dest: /tmp/pool.xml
+            - name:
+              command: virsh pool-define /tmp/pool.xml
+
+            - name: start
+              command: virsh pool-start default
+            - name: autostart
+              command: virsh pool-autostart default
+        when: poolname  in cleaned_list
+
+      - name: create  default pool
+        command: virsh pool-define-as --name default --type dir --target /pool/images
+        ignore_errors: true
+        when: poolname not in cleaned_list
+
+      - name: Start libvirtd service
+        service:
+            name: libvirtd
+            state: started
+            enabled: true

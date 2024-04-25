@@ -1,0 +1,33 @@
+version: '3.2'
+
+services:
+  myfreeradius:
+    build: .
+    ports:
+      - "1812:1812/udp"
+      - "1813:1813/udp"
+    #volumes:
+      #- "./configs/radius/users:/etc/raddb/users"
+      #- "./configs/radius/clients.conf:/etc/raddb/clients.conf"
+    environment:
+      - DB_NAME=owcluster
+      #DB_HOST 'host.docker.internal
+      - DB_HOST=10.100.1.0
+      - DB_USER=owuser
+      - DB_PASS=pass4owCluster
+      - RAD_DEBUG=yes
+ 
+    restart: always
+    #entrypoint: bash
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+  
+    networks:
+      - backend
+
+networks:
+  backend:
+    ipam:
+      config:
+        - subnet: 172.20.185.0/24
+       # - subnet: 151.180.203.0/24

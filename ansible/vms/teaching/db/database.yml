@@ -1,0 +1,8 @@
+- name: Create Users for database servers
+  hosts: db_vm
+  gather_facts: false
+  roles:
+    - role:  mysql
+      become: yes
+      become_method: sudo # this is needed to have sudo acess
+ 

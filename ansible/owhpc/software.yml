@@ -1,0 +1,14 @@
+- name: List physical volumes (PVs)
+  hosts: remote_hosts
+  gather_facts: true
+  become: true
+  vars_files:
+    - passwords.txt
+  tasks:
+    - name: Gather
+      ansible.builtin.package_facts:
+        manager: auto
+    - name: Display list of installed software
+      debug:
+        var:
+          ansible_facts.packages

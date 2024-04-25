@@ -1,0 +1,55 @@
+---
+- name: Create Logical Volumes
+  hosts: remote_hosts  # Replace with your target host or inventory group
+  gather_facts: true
+  vars:
+    volume_group: ubuntu-vg  # Replace with your desired volume group name
+    logical_volumes:
+      - name: pool
+        size: 10T
+        path: /pool
+      - name: data
+        size: 1T
+        path: /data
+
+    filesystem_type: ext4  # Replace with your desired filesystem type
+
+  become: true
+
+
+  tasks:
+    - name: Create dir
+      file:
+        path: "{{item.path}}"
+        state: directory
+        mode: '0755'
+
+      loop: "{{logical_volumes}}"
+
+    - name: Create logical volume
+      lvol:
+        vg: "{{volume_group}}"
+        lv: "{{item.name}}"
+        size: "{{item.size}}"
+      loop: "{{logical_volumes}}"
+
+    - name: Format the logical volume
+      filesystem:
+        fstype: "{{filesystem_type}}"
+        dev: "/dev/{{volume_group}}/{{item.name}}"
+      loop: "{{logical_volumes}}"
+
+    - name: Mount the logical volume
+      mount:
+        path: "{{ item.path }}"
+        src: "/dev/{{volume_group}}/{{item.name}}"
+        fstype: "{{filesystem_type}}"
+        state: mounted
+      loop: "{{logical_volumes}}"
+
+    - name: Add entry to /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        line: "/dev/{{volume_group}}/{{item.name}}   {{item.path}}   {{filesystem_type}}   defaults   0   0"
+        state: present
+      loop: "{{logical_volumes}}"
